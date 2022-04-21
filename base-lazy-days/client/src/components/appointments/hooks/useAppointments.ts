@@ -72,8 +72,9 @@ export function useAppointments(): UseAppointments {
   //       monthYear.month
   const fallback = {};
 
+  // Important for keys to have similar first element key so that we can invalidate them all easier.
   const { data: appointments = fallback } = useQuery(
-    queryKeys.appointments,
+    [queryKeys.appointments, monthYear.year, monthYear.month],
     () => getAppointments(monthYear.year, monthYear.month),
   );
 
