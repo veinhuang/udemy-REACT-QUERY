@@ -31,7 +31,18 @@ export function useUser(): UseUser {
   const queryClient = useQueryClient();
   // Pass the current user to getUser for info
   // But on the initial load what if user hasn't logged in yet. It will be null and the query won't run.
-  const { data: user } = useQuery(queryKeys.user, () => getUser(user));
+  const { data: user } = useQuery(queryKeys.user, () => getUser(user), {
+    // runs either after the query function (second param of useQuery) or
+    // from running queryClient.setQueriesData
+    onSuccess: (received: User | null) => {
+      if (!received) {
+        clearStoredUser();
+      } else {
+        // we got a user either from query function or from setQueriesData
+        setStoredUser(received);
+      }
+    },
+  });
 
   // meant to be called from useAuth
   function updateUser(newUser: User): void {
