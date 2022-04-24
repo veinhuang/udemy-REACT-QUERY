@@ -35,7 +35,7 @@ export function useUser(): UseUser {
     // initialData is added to the cache unlike placeholderData property or the default destructured value like the fallback = [] in useTreatments
     initialData: getStoredUser,
     // runs either after the query function (second param of useQuery) or
-    // from running queryClient.setQueriesData
+    // from running queryClient.setQueryData
     onSuccess: (received: User | null) => {
       if (!received) {
         clearStoredUser();
@@ -48,12 +48,17 @@ export function useUser(): UseUser {
 
   // meant to be called from useAuth
   function updateUser(newUser: User): void {
-    queryClient.setQueriesData(queryKeys.user, newUser);
+    queryClient.setQueryData(queryKeys.user, newUser);
   }
 
   // meant to be called from useAuth
   function clearUser() {
+    // after running setQueryData the onSuccess from above will run
     queryClient.setQueryData(queryKeys.user, null);
+
+    // Want to make sure user appointments data is cleaned on sign out
+    // We couldn't just run removeQueries for user data because removeQueries doesn't run the onSuccess property of useQuery to clear local storage.
+    queryClient.removeQueries('user-appointments');
   }
 
   return { user, updateUser, clearUser };
