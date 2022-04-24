@@ -32,6 +32,8 @@ export function useUser(): UseUser {
   // Pass the current user to getUser for info
   // But on the initial load what if user hasn't logged in yet. It will be null and the query won't run.
   const { data: user } = useQuery(queryKeys.user, () => getUser(user), {
+    // initialData is added to the cache unlike placeholderData property or the default destructured value like the fallback = [] in useTreatments
+    initialData: getStoredUser,
     // runs either after the query function (second param of useQuery) or
     // from running queryClient.setQueriesData
     onSuccess: (received: User | null) => {
