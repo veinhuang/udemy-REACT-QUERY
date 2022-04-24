@@ -56,9 +56,10 @@ export function useUser(): UseUser {
     // after running setQueryData the onSuccess from above will run
     queryClient.setQueryData(queryKeys.user, null);
 
-    // Want to make sure user appointments data is cleaned on sign out
+    // Want to make sure user appointments data is cleared on sign out
     // We couldn't just run removeQueries for user data because removeQueries doesn't run the onSuccess property of useQuery to clear local storage.
-    queryClient.removeQueries('user-appointments');
+    // Don't need to provide the entire query key (missing user.id) since this is enough.
+    queryClient.removeQueries([queryKeys.appointments, queryKeys.user]);
   }
 
   return { user, updateUser, clearUser };
